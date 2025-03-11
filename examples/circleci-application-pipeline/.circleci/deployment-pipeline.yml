@@ -11,10 +11,10 @@ orbs:
 parameters:
   aws-account-id:
     type: string
-    default: CHANGE_ME
+    default: 992382483259
   aws-role-arn:
     type: string
-    default: CHANGE_ME
+    default: arn:aws:iam::992382483259:role/DPRA_ROLE
   working-dir:
     type: string
     default: ~/aws-deployment-pipeline-reference-architecture/examples/circleci-application-pipeline
@@ -242,58 +242,8 @@ jobs:
       - store_artifacts:
           path: << pipeline.parameters.working-dir >>/target/jmeter/results
 
-  check-pr:
-    docker:
-      - image: cimg/base:current-22.04
-    resource_class: small
-    environment:
-      WEBHOOK_BODY: << pipeline.trigger_parameters.webhook.body >>
-    steps:
-      - run:
-          name: Check PR Event Type
-          command: |
-            echo "Received WEBHOOK_BODY: $WEBHOOK_BODY"
-
-            # Parse the 'action' from the GitHub webhook body
-            PR_ACTION=$(echo "$WEBHOOK_BODY" | jq -r '.action')
-
-            # Only continue if the action is 'opened', 'reopened', or 'synchronize'
-            if [[ "$PR_ACTION" == "opened" || "$PR_ACTION" == "reopened" ]]; then
-              echo "PR action is $PR_ACTION. Proceeding with the pipeline."
-            else
-              echo "Event action '$PR_ACTION' does not match required events (opened or reopened). Exiting job."
-              curl -X POST https://circleci.com/api/v1.1/project/circleci/${ORG_SLUG}/${PROJECT_SLUG}/${CIRCLE_BUILD_NUM}/cancel -H "Circle-Token: ${CANCEL_JOB}"
-            fi
-
 
 workflows:
-  pr_pipeline:
-    when:
-      and:
-        - equal: ["webhook", "<< pipeline.trigger_parameters.circleci.trigger_type >>"]
-    jobs:
-      - check-pr:
-          name: Checking PR Event
-          context: dpra-cancel
-      - ggshield/scan:
-          name: Scanning for Secrets with GitGuardian
-          revision: <<pipeline.git.revision>>
-          context: dpra-gitguardian
-          requires:
-            - Checking PR Event
-      - synth:
-          name: Verify CDK Synth
-          requires:
-            - Checking PR Event
-      - trivy:
-          name: Run Trivy Scan
-          requires:
-            - Checking PR Event
-      - package:
-          name: Build Application
-          requires:
-            - Checking PR Event
-
   deployment_pipeline:
     when:
       and:
