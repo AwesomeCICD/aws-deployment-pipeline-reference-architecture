@@ -22,4 +22,13 @@ if (environmentName) {
   Tags.of(app).add('Environment', environmentName);
 }
 
+// Add your custom tags
+Tags.of(app).add('cost_center', 'sm');
+Tags.of(app).add('Team', 'Field Engineering');
+Tags.of(app).add('asset_criticality', 'true');
+Tags.of(app).add('iac', 'true');
+Tags.of(app).add('owner', 'Jim.Crowley@circleci.com');
+Tags.of(app).add('critical_until', '2025-05-01');
+Tags.of(app).add('optimization_opt_in', 'false');
+
 app.synth();
