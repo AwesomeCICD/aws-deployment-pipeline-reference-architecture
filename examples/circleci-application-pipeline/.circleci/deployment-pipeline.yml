@@ -11,7 +11,7 @@ orbs:
 parameters:
   aws-account-id:
     type: string
-    default: 992382483259
+    default: "992382483259"
   aws-role-arn:
     type: string
     default: arn:aws:iam::992382483259:role/DPRA_ROLE
