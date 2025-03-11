@@ -58,7 +58,7 @@ jobs:
           name: Audit and Fix Dependencies
           command: |
             npm audit || true # Log vulnerabilities but don't fail the build
-            npm audit fix     # Attempt to fix vulnerabilities
+            npm audit fix --force    # Attempt to fix vulnerabilities
       - run:
           name: Run Test
           command: npm test
