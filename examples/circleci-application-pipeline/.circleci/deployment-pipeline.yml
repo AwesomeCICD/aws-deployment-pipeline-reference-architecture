@@ -55,7 +55,7 @@ jobs:
           with-cache: true
           cache-path: << pipeline.parameters.working-dir >>/node_modules
       - run:
-          name: Audit and Fix Dependencies using NPM
+          name: Audit and Fix Dependencies
           command: |
             # npm audit || true # Log vulnerabilities but don't fail the build
             # npm audit fix --force    # Attempt to fix vulnerabilities
