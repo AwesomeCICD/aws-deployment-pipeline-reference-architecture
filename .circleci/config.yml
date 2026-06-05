@@ -245,9 +245,6 @@ jobs:
 
 workflows:
   deployment_pipeline:
-    when:
-      and:
-        - equal: ["github_app", "<< pipeline.trigger_parameters.circleci.trigger_type >>"]
     jobs:
       - ggshield/scan:
           name: Scanning for Secrets with GitGuardian
